@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
+import { isDev, port, r } from '../scripts/utils'
 import type { Manifest } from 'webextension-polyfill'
 import type PkgType from '../package.json'
-import { isDev, port, r } from '../scripts/utils'
 
 export async function getManifest() {
   const pkg = await fs.readJSON(r('package.json')) as typeof PkgType
@@ -55,7 +55,7 @@ export async function getManifest() {
     manifest.permissions?.push('webNavigation')
 
     // this is required on dev for Vite script to load
-    manifest.content_security_policy = `script-src \'self\' http://localhost:${port}; object-src \'self\'`
+    manifest.content_security_policy = `script-src \'self\' http://localhost:${ port }; object-src \'self\'`
   }
 
   return manifest

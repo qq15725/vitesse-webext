@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
+import { createVeno } from 'veno-ui'
 import App from './Popup.vue'
-import '../styles'
+import 'veno-ui/styles'
 
 const app = createApp(App)
-app.mount('#app')
+const veno = createVeno()
+app.use(veno).mount('#app')

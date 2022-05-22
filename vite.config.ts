@@ -1,22 +1,20 @@
 /// <reference types="vitest" />
 
 import { dirname, relative } from 'path'
-import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import WindiCSS from 'vite-plugin-windicss'
-import windiConfig from './windi.config'
+import Iconify from 'vite-plugin-iconify'
+import { VenoUiResolver } from 'veno-ui'
 import { isDev, port, r } from './scripts/utils'
+import type { UserConfig } from 'vite'
 
 export const sharedConfig: UserConfig = {
   root: r('src'),
   resolve: {
     alias: {
-      '~/': `${r('src')}/`,
+      '~/': `${ r('src') }/`,
     },
   },
   define: {
@@ -43,15 +41,19 @@ export const sharedConfig: UserConfig = {
       // generate `components.d.ts` for ts support with Volar
       dts: r('src/components.d.ts'),
       resolvers: [
-        // auto import icons
-        IconsResolver({
-          componentPrefix: '',
-        }),
+        VenoUiResolver(),
       ],
     }),
 
-    // https://github.com/antfu/unplugin-icons
-    Icons(),
+    Iconify({
+      include: [
+        /\.vue$/, /\.vue\?vue/, // .vue
+        /\.md$/, // .md
+      ],
+      replaceableProps: [
+        'veno-ui',
+      ],
+    }),
 
     // rewrite assets to use relative path
     {
@@ -59,7 +61,7 @@ export const sharedConfig: UserConfig = {
       enforce: 'post',
       apply: 'build',
       transformIndexHtml(html, { path }) {
-        return html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets')}/`)
+        return html.replace(/"\/assets\//g, `"${ relative(dirname(path), '/assets') }/`)
       },
     },
   ],
@@ -77,7 +79,7 @@ export const sharedConfig: UserConfig = {
 
 export default defineConfig(({ command }) => ({
   ...sharedConfig,
-  base: command === 'serve' ? `http://localhost:${port}/` : '/dist/',
+  base: command === 'serve' ? `http://localhost:${ port }/` : '/dist/',
   server: {
     port,
     hmr: {
@@ -102,11 +104,6 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     ...sharedConfig.plugins!,
-
-    // https://github.com/antfu/vite-plugin-windicss
-    WindiCSS({
-      config: windiConfig,
-    }),
   ],
   test: {
     globals: true,
